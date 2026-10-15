@@ -1,0 +1,35 @@
+{
+  "alicuotaIva": 0.105,
+  "validezDias": 15,
+  "descuentosVolumen": [
+    { "minUnidades": 5, "porcentaje": 0.05 },
+    { "minUnidades": 10, "porcentaje": 0.08 },
+    { "minUnidades": 20, "porcentaje": 0.12 }
+  ],
+  "servicios": [
+    {
+      "id": "instalacion",
+      "nombre": "Instalación y puesta en marcha",
+      "tipo": "porUnidad",
+      "valor": 90
+    },
+    {
+      "id": "capacitacion",
+      "nombre": "Capacitación al personal",
+      "tipo": "fijo",
+      "valor": 350
+    },
+    {
+      "id": "mantenimiento",
+      "nombre": "Mantenimiento preventivo 12 meses",
+      "tipo": "porcentaje",
+      "valor": 0.06
+    }
+  ],
+  "formasPago": [
+    { "id": "transferencia", "nombre": "Transferencia (contado)", "cuotas": 1, "ajuste": -0.05 },
+    { "id": "cuotas-3", "nombre": "3 cuotas", "cuotas": 3, "ajuste": 0 },
+    { "id": "cuotas-6", "nombre": "6 cuotas", "cuotas": 6, "ajuste": 0.08 },
+    { "id": "cuotas-12", "nombre": "12 cuotas", "cuotas": 12, "ajuste": 0.18 }
+  ]
+}

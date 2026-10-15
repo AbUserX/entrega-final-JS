@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MedCotiza · Cotizador de equipamiento médico</title>
+  <meta name="description" content="Simulador de cotización de equipamiento médico para instituciones de salud.">
+  <link rel="icon" href="assets/img/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js@1.12.0/src/toastify.min.css">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="encabezado">
+    <div class="encabezado__interior">
+      <a href="#catalogo" class="marca">
+        <img src="assets/img/logo.svg" alt="" width="36" height="36">
+        <span>Med<strong>Cotiza</strong></span>
+      </a>
+      <nav class="navegacion" aria-label="Secciones">
+        <a href="#catalogo">Catálogo</a>
+        <a href="#cotizacion">Mi cotización <span id="insignia-unidades" class="insignia">0</span></a>
+        <a href="#historial">Historial</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="portada">
+    <div class="portada__interior">
+      <p class="antetitulo">Simulador de cotización · Equipamiento médico</p>
+      <h1>Armá el presupuesto de equipamiento para tu institución en minutos.</h1>
+      <ol class="pasos">
+        <li><span class="pasos__numero">1</span> Elegí equipos del catálogo</li>
+        <li><span class="pasos__numero">2</span> Ajustá cantidades, servicios y forma de pago</li>
+        <li><span class="pasos__numero">3</span> Confirmá y guardá la cotización</li>
+      </ol>
+    </div>
+  </section>
+
+  <main class="contenedor disposicion">
+    <section id="catalogo" class="catalogo" aria-labelledby="titulo-catalogo">
+      <div class="seccion__cabecera">
+        <h2 id="titulo-catalogo">Catálogo</h2>
+        <p id="contador-resultados" class="texto-suave"></p>
+      </div>
+
+      <div class="herramientas">
+        <label class="campo campo--buscar">
+          <span class="campo__etiqueta">Buscar</span>
+          <input type="search" id="buscador" placeholder="Nombre, marca o código…" autocomplete="off" disabled>
+        </label>
+        <label class="campo">
+          <span class="campo__etiqueta">Categoría</span>
+          <select id="filtro-categoria" disabled>
+            <option value="todas">Todas</option>
+          </select>
+        </label>
+        <label class="campo">
+          <span class="campo__etiqueta">Ordenar por</span>
+          <select id="orden-catalogo" disabled>
+            <option value="destacados">Destacados</option>
+            <option value="precio-asc">Menor precio</option>
+            <option value="precio-desc">Mayor precio</option>
+            <option value="nombre">Nombre (A-Z)</option>
+          </select>
+        </label>
+      </div>
+
+      <div id="estado-catalogo" class="estado-catalogo" role="status" aria-live="polite"></div>
+      <div id="grilla-catalogo" class="grilla-catalogo"></div>
+    </section>
+
+    <aside id="cotizacion" class="panel" aria-labelledby="titulo-cotizacion">
+      <div class="panel__cabecera">
+        <h2 id="titulo-cotizacion">Cotización en curso</h2>
+        <button type="button" id="boton-vaciar" class="boton boton--texto" disabled>Vaciar</button>
+      </div>
+
+      <p id="cotizacion-vacia" class="panel__vacio">Todavía no agregaste equipos. Elegí del catálogo para empezar.</p>
+      <ul id="lista-items" class="lista-items"></ul>
+
+      <fieldset class="bloque">
+        <legend>Servicios adicionales</legend>
+        <div id="lista-servicios" class="opciones"></div>
+      </fieldset>
+
+      <fieldset class="bloque">
+        <legend>Forma de pago</legend>
+        <div id="lista-formas-pago" class="opciones opciones--pago"></div>
+      </fieldset>
+
+      <div class="bloque">
+        <dl id="resumen" class="resumen"></dl>
+        <p id="sugerencia-descuento" class="sugerencia" hidden></p>
+        <div class="total">
+          <span>Total</span>
+          <strong id="total-cotizacion">US$ 0,00</strong>
+        </div>
+        <p id="detalle-cuotas" class="texto-suave total__cuotas"></p>
+      </div>
+
+      <form id="formulario-cliente" class="bloque formulario" novalidate>
+        <h3>Datos de la institución</h3>
+        <div class="campo" data-campo="institucion">
+          <label class="campo__etiqueta" for="institucion">Institución *</label>
+          <input id="institucion" name="institucion" type="text" placeholder="Ej.: Clínica San Martín" autocomplete="organization">
+          <small class="campo__error" id="error-institucion"></small>
+        </div>
+        <div class="campo" data-campo="tipoInstitucion">
+          <label class="campo__etiqueta" for="tipoInstitucion">Tipo de institución *</label>
+          <select id="tipoInstitucion" name="tipoInstitucion">
+            <option value="">Seleccioná una opción</option>
+            <option value="Hospital público">Hospital público</option>
+            <option value="Clínica / sanatorio privado">Clínica / sanatorio privado</option>
+            <option value="Centro de diagnóstico">Centro de diagnóstico</option>
+            <option value="Consultorio">Consultorio</option>
+          </select>
+          <small class="campo__error" id="error-tipoInstitucion"></small>
+        </div>
+        <div class="campo" data-campo="responsable">
+          <label class="campo__etiqueta" for="responsable">Responsable de compras *</label>
+          <input id="responsable" name="responsable" type="text" placeholder="Nombre y apellido" autocomplete="name">
+          <small class="campo__error" id="error-responsable"></small>
+        </div>
+        <div class="campo" data-campo="email">
+          <label class="campo__etiqueta" for="email">Email *</label>
+          <input id="email" name="email" type="email" placeholder="compras@institucion.com" autocomplete="email">
+          <small class="campo__error" id="error-email"></small>
+        </div>
+        <div class="campo" data-campo="telefono">
+          <label class="campo__etiqueta" for="telefono">Teléfono</label>
+          <input id="telefono" name="telefono" type="tel" placeholder="Opcional" autocomplete="tel">
+          <small class="campo__error" id="error-telefono"></small>
+        </div>
+        <button type="submit" id="boton-confirmar" class="boton boton--primario boton--ancho" disabled>Confirmar cotización</button>
+      </form>
+    </aside>
+  </main>
+
+  <section id="historial" class="contenedor historial" aria-labelledby="titulo-historial">
+    <div class="seccion__cabecera">
+      <h2 id="titulo-historial">Cotizaciones guardadas</h2>
+      <button type="button" id="boton-vaciar-historial" class="boton boton--secundario" disabled>Vaciar historial</button>
+    </div>
+    <p id="historial-vacio" class="texto-suave">Las cotizaciones que confirmes aparecerán acá.</p>
+    <div id="lista-historial" class="lista-historial"></div>
+  </section>
+
+  <footer class="pie">
+    <div class="contenedor pie__interior">
+      <p>MedCotiza · Proyecto académico. Equipos, marcas y precios son simulados.</p>
+      <button type="button" id="boton-restablecer" class="boton boton--texto">Restablecer datos guardados</button>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/toastify-js@1.12.0" defer></script>
+  <script src="js/datos.js" defer></script>
+  <script src="js/cotizacion.js" defer></script>
+  <script src="js/app.js" defer></script>
+</body>
+</html>
